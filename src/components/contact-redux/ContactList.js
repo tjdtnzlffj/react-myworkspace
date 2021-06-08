@@ -1,8 +1,13 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ContactItem from "./ContactItem";
 
 const ContactList = () => {
   const contactAddress = useSelector((state) => state.contact);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch({ type: "FETCH_CONTACTLIST" });
+  }, [dispatch]);
   return (
     <div>
       <table>

@@ -1,11 +1,14 @@
-import { call, put, takeEvery, takeLatest } from "@redux-saga/core/effects";
+import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import api from "../../api/contact";
 
 function* enrtyContact(action) {
-  console.log("--sagas:  entry Contact --");
+  console.log("--sagas: add Todo --");
   console.log(action);
+
   try {
     const result = yield call(api.entry, action.payload);
+    console.log(result);
+
     yield put({
       type: "ENTRY_CONTACT_SUCCEEDED",
       payload: { id: result.data.id, ...action.payload },
@@ -14,7 +17,6 @@ function* enrtyContact(action) {
     alert(e.message);
   }
 }
-
 function* fetchContactList(action) {
   console.log(action);
   try {

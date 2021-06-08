@@ -10,6 +10,8 @@ const contact = (state = initialState, action) => {
       return state.map((member) =>
         member.id === action.payload.id ? { ...action.payload } : member
       );
+    case "FETCH_CONTACTLIST_SUCCEEDED":
+      return [...action.payload];
     default:
       return state;
   }
