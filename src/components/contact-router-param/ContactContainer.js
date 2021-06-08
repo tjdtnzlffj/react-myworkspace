@@ -3,12 +3,10 @@ import { useRef, useState } from "react";
 import ContactList from "./ContactList";
 import ContactForm from "./ContactForm";
 
+import {lst} from "./data"
+
 const ContactContainer = () => {
-  const [contactAddress, setContactAddress] = useState([
-    { name: "" },
-    { phone: "" },
-    { email: "" },
-  ]);
+  const [contactAddress, setContactAddress] = useState(lst);
   const list = useRef();
   const nickName = useRef();
   const number = useRef();

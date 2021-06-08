@@ -1,9 +1,12 @@
 import Button from "@material-ui/core/Button";
 
 import { useState } from "react";
+import { useHistory } from "react-router";
 
 const ContactItem = ({ order, onRemove, onSave, member }) => {
   const [edit, setEdit] = useState(member.Edit);
+  const history = useHistory();
+
   return (
     <div>
       <table>
@@ -21,9 +24,9 @@ const ContactItem = ({ order, onRemove, onSave, member }) => {
                 ✔
               </Button>
             </td>
-            {!edit && <td>{member.name}</td>}
-            {!edit && <td>{member.phone}</td>}
-            {!edit && <td>{member.email}</td>}
+            {!edit && <td style={{cursor:"pointer"}} onClick={() => {history.push(`/contact/${member.keyword}`);}}>{member.name}</td>}
+            {!edit && <td style={{cursor:"pointer"}} onClick={() => {history.push(`/contact/${member.keyword}`);}}>{member.phone}</td>}
+            {!edit && <td style={{cursor:"pointer"}} onClick={() => {history.push(`/contact/${member.keyword}`);}}>{member.email}</td>}
             <td>
               {!member.edit && (
                 <Button

@@ -1,11 +1,33 @@
 import Button from "@material-ui/core/Button";
+import ListItem from "@material-ui/core/ListItem";
+import { useState, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router";
 
-import { useState } from "react";
-
-const ContactItem = ({ order, onRemove, onSave, member }) => {
+const ContactItem = ({ member }) => {
   const [edit, setEdit] = useState(member.Edit);
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const nickName = useRef();
+  const number = useRef();
+  const mail = useRef();
+
+  const remove = (id) => {
+    dispatch({ type: "REMOVE_CONTACT", payload: id });
+  };
+
+  const save = (id) => {
+    const name = nickName.current.value;
+    const phone = number.current.value;
+    const email = mail.current.value;
+    dispatch({
+      type: "MODIFY_CONTACT",
+      payload: { id, name, phone, email },
+    });
+  };
+
   return (
-    <div>
+    <ListItem>
       <table>
         <tbody>
           <tr>
@@ -15,15 +37,43 @@ const ContactItem = ({ order, onRemove, onSave, member }) => {
                 variant="outlined"
                 color="primary"
                 onClick={() => {
-                  onRemove(order);
+                  remove(member.id);
                 }}
+                style={{ cursor: "pointer" }}
               >
                 ✔
               </Button>
             </td>
-            {!edit && <td>{member.name}</td>}
-            {!edit && <td>{member.phone}</td>}
-            {!edit && <td>{member.email}</td>}
+            {!edit && (
+              <td
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  history.push(`/contact/${member.id}`);
+                }}
+              >
+                {member.name}
+              </td>
+            )}
+            {!edit && (
+              <td
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  history.push(`/contact/${member.id}`);
+                }}
+              >
+                {member.phone}
+              </td>
+            )}
+            {!edit && (
+              <td
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  history.push(`/contact/${member.id}`);
+                }}
+              >
+                {member.email}
+              </td>
+            )}
             <td>
               {!member.edit && (
                 <Button
@@ -38,22 +88,22 @@ const ContactItem = ({ order, onRemove, onSave, member }) => {
               )}
               {edit && (
                 <input
-                  class="firstName"
                   type="text"
+                  ref={nickName}
                   defaultValue={member.name}
                 ></input>
               )}
               {edit && (
                 <input
-                  class="secondPhone"
                   type="text"
+                  ref={number}
                   defaultValue={member.phone}
                 ></input>
               )}
               {edit && (
                 <input
-                  class="thridEmail"
                   type="text"
+                  ref={mail}
                   defaultValue={member.email}
                 ></input>
               )}
@@ -62,7 +112,7 @@ const ContactItem = ({ order, onRemove, onSave, member }) => {
                   variant="outlined"
                   color="primary"
                   onClick={() => {
-                    onSave(order);
+                    save(member.id);
                     setEdit(false);
                   }}
                 >
@@ -84,7 +134,7 @@ const ContactItem = ({ order, onRemove, onSave, member }) => {
           </tr>
         </tbody>
       </table>
-    </div>
+    </ListItem>
   );
 };
 

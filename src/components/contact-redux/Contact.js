@@ -1,11 +1,11 @@
-import ContactContainer from "./ContactContainer";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Hidden from "@material-ui/core/Hidden";
+import ContactList from "./ContactList";
+import ContactForm from "./ContactForm";
 
 import { Divider, Typography } from "@material-ui/core";
-
 
 const useStyles = makeStyles((theme) => ({
   formRoot: {
@@ -29,7 +29,7 @@ const Contact = () => {
 
   return (
     <>
-     <Grid container spacing={3} className={classes.container}>
+      <Grid container spacing={3} className={classes.container}>
         <Hidden xsDown>
           <Grid item sm={1} md={2} lg={3} />
         </Hidden>
@@ -37,14 +37,14 @@ const Contact = () => {
           <Paper className={classes.paper}>
             <Typography variant="h3">Contact</Typography>
             <Divider style={{ marginTop: "1rem", marginBottom: "2rem" }} />
-            <ContactContainer />
+            <ContactForm />
+            <ContactList />
           </Paper>
         </Grid>
         <Hidden xsDown>
           <Grid item sm={1} md={2} lg={3} />
         </Hidden>
       </Grid>
-      
     </>
   );
 };
