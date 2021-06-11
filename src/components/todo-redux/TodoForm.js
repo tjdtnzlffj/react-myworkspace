@@ -11,7 +11,7 @@ const TodoForm = () => {
 
   const add = () => {
     const memo = inputRef.current.value;
-    // idspatch(action객체)
+    // dispatch(action객체)
     // action객체 = {type:"명령어", payload:메시지객체}
     dispatch({ type: "ADD_TODO", payload: { memo } });
     inputRef.current.value = "";

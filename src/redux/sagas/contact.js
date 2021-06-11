@@ -20,7 +20,9 @@ function* enrtyContact(action) {
 function* fetchContactList(action) {
   console.log(action);
   try {
+    // 1. 서버에서 데이터 받아오기
     const result = yield call(api.fetch);
+    // 2. 받아온 데이터로 state 변경
     yield put({ type: "FETCH_CONTACTLIST_SUCCEEDED", payload: result.data });
   } catch (e) {
     alert(e.message);

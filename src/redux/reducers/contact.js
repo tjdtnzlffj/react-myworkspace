@@ -11,6 +11,7 @@ const contact = (state = initialState, action) => {
         member.id === action.payload.id ? { ...action.payload } : member
       );
     case "FETCH_CONTACTLIST_SUCCEEDED":
+      // 3. 서버에서 받아온 데이터로 state를 변경
       return [...action.payload];
     default:
       return state;

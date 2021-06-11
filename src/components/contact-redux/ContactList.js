@@ -4,6 +4,7 @@ import ContactItem from "./ContactItem";
 
 const ContactList = () => {
   const contactAddress = useSelector((state) => state.contact);
+  // 4.
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch({ type: "FETCH_CONTACTLIST" });
@@ -19,7 +20,7 @@ const ContactList = () => {
           </tr>
         </thead>
       </table>
-
+      {/* 5.  */}
       {contactAddress.map((member) => (
         <ContactItem key={member.id} member={member} />
       ))}
