@@ -58,15 +58,15 @@ const transformRainData = (weatherForecastDataSource) => {
         POP: parseInt(
           guData[guData.findIndex((gu) => gu.category === "POP")].fcstValue
         ),
-        // PTY: parseInt(
-        //   guData[guData.findIndex((gu) => gu.category === "PTY")].fcstValue
-        // ),
-        // R06: parseInt(
-        //   guData[guData.findIndex((gu) => gu.category === "R06")].fcstValue
-        // ),
-        // REH: parseInt(
-        //   guData[guData.findIndex((gu) => gu.category === "REH")].fcstValue
-        // ),
+        PTY: parseInt(
+          guData[guData.findIndex((gu) => gu.category === "PTY")].fcstValue
+        ),
+        R06: parseInt(
+          guData[guData.findIndex((gu) => gu.category === "R06")].fcstValue
+        ),
+        REH: parseInt(
+          guData[guData.findIndex((gu) => gu.category === "REH")].fcstValue
+        ),
       };
       // console.log(rainItem);
 
@@ -97,15 +97,15 @@ const transformTemperatureData = (weatherForecastDataSource) => {
         SKY: parseInt(
           guData1[guData1.findIndex((gu) => gu.category === "SKY")].fcstValue
         ),
-        // T3H: parseInt(
-        //   guData1[guData1.findIndex((gu) => gu.category === "T3H")].fcstValue
-        // ),
-        // TMN: parseInt(
-        //   guData1[guData1.findIndex((gu) => gu.category === "TMN")].fcstValue
-        // ),
-        // TMX: parseInt(
-        //   guData1[guData1.findIndex((gu) => gu.category === "TMX")].fcstValue
-        // ),
+        T3H: parseInt(
+          guData1[guData1.findIndex((gu) => gu.category === "T3H")].fcstValue
+        ),
+        TMN: parseInt(
+          guData1[guData1.findIndex((gu) => gu.category === "TMN")].fcstValue
+        ),
+        TMX: parseInt(
+          guData1[guData1.findIndex((gu) => gu.category === "TMX")].fcstValue
+        ),
       };
       guTemperatureData.push(temperatureItem);
     }
