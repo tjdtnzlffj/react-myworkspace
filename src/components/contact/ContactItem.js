@@ -1,4 +1,5 @@
 import Button from "@material-ui/core/Button";
+import { auto } from "async";
 
 import { useState } from "react";
 
@@ -6,8 +7,8 @@ const ContactItem = ({ order, onRemove, onSave, member }) => {
   const [edit, setEdit] = useState(member.Edit);
   return (
     <div>
-      <table>
-        <tbody>
+      <table border={"1px solid red"}>
+        <tbody display={block} height="50px" overflow={auto}>
           <tr>
             <td>
               {" "}

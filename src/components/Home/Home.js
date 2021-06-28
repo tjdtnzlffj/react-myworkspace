@@ -3,9 +3,18 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Hidden from "@material-ui/core/Hidden";
 
-import BarChartSample from "./BarChartSample";
-import LineChartSample from "./LineChartSample";
-import AreaChartSample from "./AreaChartSample";
+import weatherForecastCode from "./data/weatherForecastCode";
+import LineBarAreaComposedChart from "./LineBarAreaComposedChart";
+import LineBarAreaComposedChart2 from "./LineBarAreaComposedChart2";
+import Chart from "react-google-charts";
+
+import { useEffect, useState } from "react";
+// import weatherForecastSource from "./data/weatherForecastDataSource";
+import nxnyCityName from "./data/nxnyCityName";
+import rainCategoryDataSource from "./data/rainCategoryDataSource";
+import temperatureCategoryDataSource from "./data/temperatureCategoryDataSource";
+
+import api from "../../api/opendata";
 
 const useStyles = makeStyles((theme) => ({
   // 내부 페이퍼에 스타일을 지정
@@ -23,112 +32,101 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const transformRainData = (weatherForecastDataSource) => {
+  if (weatherForecastDataSource.length === 0) return [];
+
+  for (let rainCategory of rainCategoryDataSource) {
+    const rainData = weatherForecastDataSource.filter((source) => {
+      // console.log(source.category + " " + rainCategory);
+      return source.category === rainCategory;
+    });
+
+    // console.log(rainData);
+
+    const guRainData = [];
+
+    for (let nxny of nxnyCityName) {
+      const guData = rainData.filter((rain) => {
+        // console.log(rain.nx + " " + nxny.nx);
+        // console.log(rain.ny + " " + nxny.ny);
+        return rain.nx === nxny.nx && rain.ny === nxny.ny;
+      });
+      // console.log(guData);
+
+      const rainItem = {
+        gu: nxny.name,
+        POP: parseInt(
+          guData[guData.findIndex((gu) => gu.category === "POP")].fcstValue
+        ),
+        // PTY: parseInt(
+        //   guData[guData.findIndex((gu) => gu.category === "PTY")].fcstValue
+        // ),
+        // R06: parseInt(
+        //   guData[guData.findIndex((gu) => gu.category === "R06")].fcstValue
+        // ),
+        // REH: parseInt(
+        //   guData[guData.findIndex((gu) => gu.category === "REH")].fcstValue
+        // ),
+      };
+      // console.log(rainItem);
+
+      guRainData.push(rainItem);
+    }
+    return guRainData;
+  }
+};
+
+const transformTemperatureData = (weatherForecastDataSource) => {
+  if (weatherForecastDataSource.length === 0) return [];
+
+  for (let temperatureCategory of temperatureCategoryDataSource) {
+    const temperatureData = weatherForecastDataSource.filter((source) => {
+      return source.category === temperatureCategory;
+    });
+
+    const guTemperatureData = [];
+
+    for (let nxny of nxnyCityName) {
+      const guData1 = temperatureData.filter((temperature) => {
+        return temperature.nx === nxny.nx && temperature.ny === nxny.ny;
+      });
+      // console.log(guData1);
+
+      const temperatureItem = {
+        city: nxny.name,
+        SKY: parseInt(
+          guData1[guData1.findIndex((gu) => gu.category === "SKY")].fcstValue
+        ),
+        // T3H: parseInt(
+        //   guData1[guData1.findIndex((gu) => gu.category === "T3H")].fcstValue
+        // ),
+        // TMN: parseInt(
+        //   guData1[guData1.findIndex((gu) => gu.category === "TMN")].fcstValue
+        // ),
+        // TMX: parseInt(
+        //   guData1[guData1.findIndex((gu) => gu.category === "TMX")].fcstValue
+        // ),
+      };
+      guTemperatureData.push(temperatureItem);
+    }
+    return guTemperatureData;
+  }
+};
+
 const Home = () => {
   const classes = useStyles();
 
-  const data = [
-    { sido: "seoul", pm10: 20, pm25: 10 },
-    { sido: "gyeonggi", pm10: 20, pm25: 10 },
-    { sido: "incheon", pm10: 14, pm25: 7 },
-    { sido: "gangwon", pm10: 33, pm25: 15 },
-    { sido: "sejong", pm10: 22, pm25: 6 },
-    { sido: "chungbuk", pm10: 34, pm25: 14 },
-    { sido: "chungnam", pm10: 13, pm25: 7 },
-    { sido: "daejeon", pm10: 20, pm25: 7 },
-    { sido: "gyeongbuk", pm10: 23, pm25: 10 },
-    { sido: "gyeongnam", pm10: 17, pm25: 9 },
-    { sido: "daegu", pm10: 21, pm25: 9 },
-    { sido: "ulsan", pm10: 17, pm25: 12 },
-    { sido: "busan", pm10: 19, pm25: 12 },
-    { sido: "jeonbuk", pm10: 9, pm25: 5 },
-    { sido: "jeonnam", pm10: 17, pm25: 9 },
-    { sido: "gwangju", pm10: 12, pm25: 7 },
-    { sido: "jeju", pm10: 10, pm25: 4 },
-  ];
+  const [weatherForecastDataSource, setWeatherForecastDataSource] = useState(
+    []
+  );
 
-  const sidoKorName = {
-    seoul: "서울",
-    gyeonggi: "경기",
-    incheon: "인천",
-    gangwon: "강원",
-    sejong: "세종",
-    chungbuk: "충북",
-    chungnam: "충남",
-    daejeon: "대전",
-    gyeongbuk: "경북",
-    gyeongnam: "경남",
-    daegu: "대구",
-    ulsan: "울산",
-    busan: "부산",
-    jeonbuk: "전북",
-    jeonnam: "전남",
-    gwangju: "광주",
-    jeju: "제주",
-  };
-
-  for (let elm of data) {
-    elm.sido = sidoKorName[elm.sido];
-  }
-
-  // 서울 중구의 시간대별 변화
-  const locationCurrentData = [
-    { dataTime: "05-27:01", pm10: 46, pm25: 15 },
-    { dataTime: "05-27:02", pm10: 46, pm25: 18 },
-    { dataTime: "05-27:03", pm10: 43, pm25: 16 },
-    { dataTime: "05-27:04", pm10: 37, pm25: 12 },
-    { dataTime: "05-27:05", pm10: 39, pm25: 13 },
-    { dataTime: "05-27:06", pm10: 37, pm25: 14 },
-    { dataTime: "05-27:07", pm10: 38, pm25: 14 },
-    { dataTime: "05-27:08", pm10: 42, pm25: 16 },
-    { dataTime: "05-27:09", pm10: 38, pm25: 15 },
-    { dataTime: "05-27:10", pm10: 22, pm25: 9 },
-    { dataTime: "05-27:11", pm10: 17, pm25: 8 },
-    { dataTime: "05-27:12", pm10: 17, pm25: 10 },
-  ];
-  const data1 = [
-    {
-      name: 'Page A',
-      uv: 4000,
-      pv: 2400,
-      amt: 2400,
-    },
-    {
-      name: 'Page B',
-      uv: 3000,
-      pv: 1398,
-      amt: 2210,
-    },
-    {
-      name: 'Page C',
-      uv: 2000,
-      pv: 9800,
-      amt: 2290,
-    },
-    {
-      name: 'Page D',
-      uv: 2780,
-      pv: 3908,
-      amt: 2000,
-    },
-    {
-      name: 'Page E',
-      uv: 1890,
-      pv: 4800,
-      amt: 2181,
-    },
-    {
-      name: 'Page F',
-      uv: 2390,
-      pv: 3800,
-      amt: 2500,
-    },
-    {
-      name: 'Page G',
-      uv: 3490,
-      pv: 4300,
-      amt: 2100,
-    },
-  ];
+  useEffect(() => {
+    const getData = async () => {
+      const result = await api.fetchWeatherForecast();
+      setWeatherForecastDataSource(result.data);
+    };
+    getData();
+  }, []);
 
   return (
     // Grid 컨테이너 선언
@@ -140,14 +138,27 @@ const Home = () => {
       <Hidden mdDown>
         <Grid item lg={1} />
       </Hidden>
-      <Grid item xs={12} sm={7} lg={6}>
-        <Paper className={classes.paper} style={{ height: "20vh" }}>
-          <BarChartSample data={data} />
+      <Grid item xs={12} sm={8} lg={7}>
+        <Paper className={classes.paper} style={{ height: "29vh" }}>
+          <h3>서울시 각 구별 강수정보</h3>
+          <LineBarAreaComposedChart
+            data={transformRainData(weatherForecastDataSource)}
+          />
+          <footer>강수량 강수확률 습도 강수유형</footer>
         </Paper>
       </Grid>
-      <Grid item xs={12} sm={5} lg={4}>
-        <Paper className={classes.paper} style={{ height: "20vh" }}>
-          <LineChartSample data={locationCurrentData} />
+      <Grid item xs={12} sm={4} lg={3}>
+        <Paper className={classes.paper} style={{ height: "29vh" }}>
+          <Chart
+            width={"380px"}
+            height={"300px"}
+            chartType="Table"
+            data={weatherForecastCode}
+            options={{
+              showRowNumber: true,
+            }}
+            rootProps={{ "data-testid": "1" }}
+          />
         </Paper>
       </Grid>
       <Hidden mdDown>
@@ -157,8 +168,12 @@ const Home = () => {
         <Grid item lg={1} />
       </Hidden>
       <Grid item xs={12} sm={12} lg={10}>
-        <Paper className={classes.paper} style={{ height: "40vh" }}>
-          <AreaChartSample data={data1}/>
+        <Paper className={classes.paper} style={{ height: "39vh" }}>
+          <h3>서울시 각 구별 날씨 및 기온</h3>
+          <LineBarAreaComposedChart2
+            data={transformTemperatureData(weatherForecastDataSource)}
+          />
+          <footer>기온 낮 최고기온 아침 최저기온 하늘상태</footer>
         </Paper>
       </Grid>
       <Hidden mdDown>
